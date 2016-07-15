@@ -28,10 +28,11 @@ main() {
 				allPlanetsComplete := false
 			}
 			if (currentPlanetCursor = planetCount) {
-			navigateToFirstPlanet()
-			currentPlanetCursor := 1
+				navigateToFirstPlanet()
+				currentPlanetCursor := 1
 			} else {
 				navigateToNextPlanet()
+				sendShip()
 				currentPlanetCursor := currentPlanetCursor + 1
 			}
 		
@@ -52,6 +53,9 @@ navigateToFirstPlanet() {
 }
 
 navigateToNextPlanet() {
+}
+
+sendShip() {
 }
 
 
