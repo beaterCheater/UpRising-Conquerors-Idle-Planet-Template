@@ -105,7 +105,7 @@ Class Planet{
 	this.fuelGenLvl := 0
 	this.fuelTankLvl := 0
 	this.hangarLvl := 0
-	this.PlanetTemplate := planetTemplate
+	this.planetTemplate := planetTemplate
 	this.upgradeAvailableColor := "0xFFFFFF"
 	this.listOfShips := Array()
 	}
@@ -120,87 +120,99 @@ Class Planet{
 	}
 	
 	upgradePowerPlant() {
-		x := 1187
-		y := 484
-		variation := 0
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			this.powerPlantLvl := this.powerPlantLvl + 1
-			;MsgBox, Found.
-		} else {
-			;MsgBox, That color was not found in the specified region.
+		if (this.powerPlantLvl < this.planetTemplate.powerPlantLvl) {
+			x := 1187
+			y := 484
+			variation := 0
+			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+			if not ErrorLevel {
+				MouseClick, left, x, y
+				this.powerPlantLvl := this.powerPlantLvl + 1
+				;MsgBox, Found.
+			} else {
+				;MsgBox, That color was not found in the specified region.
+			}
 		}
 	}
 	
 	upgradeMaterialExtractor() {
-		x := 1189
-		y := 543
-		variation := 0
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			this.materialExtractorLvl := this.materialExtractorLvl + 1
-			;MsgBox, Found.
-		} else {
-			;MsgBox, That color was not found in the specified region.
+		if (this.materialExtractorLvl < this.planetTemplate.materialExtractorLvl) {
+			x := 1189
+			y := 543
+			variation := 0
+			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+			if not ErrorLevel {
+				MouseClick, left, x, y
+				this.materialExtractorLvl := this.materialExtractorLvl + 1
+				;MsgBox, Found.
+			} else {
+				;MsgBox, That color was not found in the specified region.
+			}
 		}
 	}
 	
 	upgradeWareHouse() {
-		x := 1189
-		y := 606
-		variation := 0
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			this.warehouseLvl := this.warehouseLvl + 1
-			;MsgBox, Found.
-		} else {
-			;MsgBox, That color was not found in the specified region.
+		if (this.warehouseLvl < this.planetTemplate.warehouseLvl) {
+			x := 1189
+			y := 606
+			variation := 0
+			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+			if not ErrorLevel {
+				MouseClick, left, x, y
+				this.warehouseLvl := this.warehouseLvl + 1
+				;MsgBox, Found.
+			} else {
+				;MsgBox, That color was not found in the specified region.
+			}
 		}
 	}
 	
 	upgradeFuelGen() {
-		x := 1195
-		y := 661
-		variation := 0
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			this.fuelGenLvl := this.fuelGenLvl + 1
-			;MsgBox, Found.
-		} else {
-			;MsgBox, That color was not found in the specified region.
+		if (this.fuelGenLvl < this.planetTemplate.fuelGenLvl) {
+			x := 1195
+			y := 661
+			variation := 0
+			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+			if not ErrorLevel {
+				MouseClick, left, x, y
+				this.fuelGenLvl := this.fuelGenLvl + 1
+				;MsgBox, Found.
+			} else {
+				;MsgBox, That color was not found in the specified region.
+			}
 		}
 	}
 	
 	upgradeFuelTank() {
-		x := 1195
-		y := 716
-		variation := 0
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			this.fuelTankLvl := this.fuelTankLvl + 1
-			;MsgBox, Found.
-		} else {
-			;MsgBox, That color was not found in the specified region.
+		if (this.fuelTankLvl < this.planetTemplate.fuelTankLvl) {
+			x := 1195
+			y := 716
+			variation := 0
+			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+			if not ErrorLevel {
+				MouseClick, left, x, y
+				this.fuelTankLvl := this.fuelTankLvl + 1
+				;MsgBox, Found.
+			} else {
+				;MsgBox, That color was not found in the specified region.
+			}
 		}
 	}
 	
 	upgradeHanger() {
-		x := 1195
-		y := 716
-		variation := 0
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			this.hangarLvl := this.hangarLvl + 1
-			this.listOfShips.Push(new Ship(this.planetTemplate.shipLvl))
-			;MsgBox, Found.
-		} else {
-			;MsgBox, That color was not found in the specified region.
+		if (this.hangarLvl < this.planetTemplate.hangarLvl) {
+			x := 1195
+			y := 716
+			variation := 0
+			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+			if not ErrorLevel {
+				MouseClick, left, x, y
+				this.hangarLvl := this.hangarLvl + 1
+				this.listOfShips.Push(new Ship(this.planetTemplate.shipLvl))
+				;MsgBox, Found.
+			} else {
+				;MsgBox, That color was not found in the specified region.
+			}
 		}
 	}
 	
