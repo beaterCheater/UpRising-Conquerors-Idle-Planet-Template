@@ -14,9 +14,9 @@ t::
 	return
 	
 test() {
-	planetTemplate := new PlanetTemplate(10,10,10,10,10,1)
-	myPlanet := new Planet(planetTemplate)
-	myPlanet.upgradeFuelGen()
+	;MsgBox, Test2
+	ship1 := new Ship(3,2)
+	ship1.upgradeShip()
 }
 
 main() {
@@ -38,7 +38,7 @@ main() {
 				allPlanetsComplete := false
 			}
 			if (currentPlanetCursor = planetCount) {
-				navigateToFirstPlanet(planetCount)
+				navigateToFirstPlanet(planetCount-1)
 				currentPlanetCursor := 1
 			} else {
 				navigateToNextPlanet()
@@ -56,11 +56,16 @@ updateResearch() {
 updateUpgrades() {
 }
 
-navigateToFirstPlanet(planetCount) {
-	
+navigateToFirstPlanet(jumpsBack) {
+	Loop %jumpsBack% {
+		Send {a}
+		Sleep, 100
+	}
 }
 
 navigateToNextPlanet() {
+	Send {d}
+	Sleep, 200
 }
 
 sendShip() {
@@ -108,12 +113,19 @@ Class Planet{
 	
 	upgrade() {
 		this.upgradePowerPlant()
+		Sleep, 500
 		this.upgradeMaterialExtractor()
+		Sleep, 500
 		this.upgradeWareHouse()
+		Sleep, 500
 		this.upgradeFuelGen()
+		Sleep, 500
 		this.upgradeFuelTank()
+		Sleep, 500
 		this.upgradeHanger()
+		Sleep, 500
 		this.upgradeShips()
+		Sleep, 500
 	}
 	
 	upgradePowerPlant() {
@@ -215,12 +227,13 @@ Class Planet{
 	
 	upgradeShips() {
 		for ship in listOfShips {
-			ship.upgrade()
+			ship.upgradeShip()
+			Sleep, 500
 		}
 	}
 	
 	isFullyUpgraded() {
-		return (this.planetTemplate.powerPlantLvl = this.powerPlantLvl) and (this.planetTemplate.materialExtractorLvl = this.materialExtractorLvl) and (this.planetTemplate.warehouseLvl = this.warehouseLvl) and (this.planetTemplate.fuelGenLvl = this.fuelGenLvl) and (this.planetTemplate.fuelTankLvl = this.fuelTankLvl) and (this.planetTemplate.hangarLvl = this.hangarLvl) and areAllShipsUpgraded()
+		return (this.planetTemplate.powerPlantLvl = this.powerPlantLvl) and (this.planetTemplate.materialExtractorLvl = this.materialExtractorLvl) and (this.planetTemplate.warehouseLvl = this.warehouseLvl) and (this.planetTemplate.fuelGenLvl = this.fuelGenLvl) and (this.planetTemplate.fuelTankLvl = this.fuelTankLvl) and (this.planetTemplate.hangarLvl = this.hangarLvl) and this.areAllShipsUpgraded()
 	}
 	
 	areAllShipsUpgraded() {
@@ -235,38 +248,41 @@ Class Planet{
 
 Class Ship{
 
-	_New(desiredShipLvl, shipNumber){
+	__New(desiredShipLvl, shipNumber){
 		this.shipLvl := 1
 		this.desiredShipLvl := desiredShipLvl
 		this.shipNumber := shipNumber
+		this.upgradeShipAvailableColor := "0xEBE0CD"
 	}
 	
 	isShipFullyUpgraded() {
 		return (this.shipLvl = this.desiredShipLvl)
 	}
 	
-	upgrade() {
+	upgradeShip() {
 		if (this.shipLvl < this.desiredShipLvl) {
-			x := 1195
+			x := 1206
 			y := this.getYCoordBasedOnShipNr()
-			variation := 0
-			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+			variation := 50
+			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeShipAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
 				this.shipLvl := this.shipLvl + 1
 				;MsgBox, Found.
 			} else {
-				;MsgBox, That color was not found in the specified region.
+				MsgBox, Ship upgrade not found, %y%
 			}
 		}
 	}
 	
 	getYCoordBasedOnShipNr() {
 		if (this.shipNumber = 1) {
-			return 817
-		} else if (this.shipLvl = 2) {
-			return 849
-		}			
+			return 811
+		} else if (this.shipNumber = 2) {
+			return 843
+		} else if (this.shipNumber = 3) {
+			return 876
+		}
 	}
 }
 
