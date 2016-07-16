@@ -204,6 +204,12 @@ Class Planet{
 		}
 	}
 	
+	upgradeShips() {
+		for ship in listOfShips {
+			ship.upgrade()
+		}
+	}
+	
 	isFullyUpgraded() {
 		return (this.planetTemplate.powerPlantLvl = this.powerPlantLvl) and (this.planetTemplate.materialExtractorLvl = this.materialExtractorLvl) and (this.planetTemplate.warehouseLvl = this.warehouseLvl) and (this.planetTemplate.fuelGenLvl = this.fuelGenLvl) and (this.planetTemplate.fuelTankLvl = this.fuelTankLvl) and (this.planetTemplate.hangarLvl = this.hangarLvl) and areAllShipsUpgraded()
 	}
@@ -221,13 +227,39 @@ Class Planet{
 
 Class Ship{
 
-	_New(desiredShipLvl){
+	_New(desiredShipLvl, shipNumber){
 		this.shipLvl := 1
 		this.desiredShipLvl := desiredShipLvl
+		this.shipNumber := shipNumber
 	}
 	
 	isShipFullyUpgraded() {
 		return (this.shipLvl = this.desiredShipLvl)
+	}
+	
+	upgrade() {
+		x := 1195
+		y := this.getYCoordBasedOnShipNr()
+		variation := 0
+		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+		if not ErrorLevel {
+			MouseClick, left, x, y
+			this.fuelTankLvl := this.fuelTankLvl + 1
+			;MsgBox, Found.
+		} else {
+			;MsgBox, That color was not found in the specified region.
+		}
+	
+	
+	}
+	
+	getYCoordBasedOnShipNr() {
+		if (this.shipNumber = 1) {
+			return 817
+		} else if (this.shipLvl = 2) {
+			return 849
+		}
+			
 	}
 
 }
