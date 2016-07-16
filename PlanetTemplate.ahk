@@ -31,10 +31,10 @@ main() {
 		updateUpgrades()
 		currentPlanetCursor := 1
 		allPlanetsComplete := true
-		Loop %planetCount% {
-			currentPlanet = listOfPlanets[currentPlanet]
-			currentPlanet.upgrade()
-			if (currentPlanet.isFullyUpgraded() = false) {
+		
+		for planet in listOfPlanets {
+			planet.upgrade()
+			if (planet.isFullyUpgraded() = false) {
 				allPlanetsComplete := false
 			}
 			if (currentPlanetCursor = planetCount) {
@@ -45,11 +45,17 @@ main() {
 				sendShip()
 				currentPlanetCursor := currentPlanetCursor + 1
 			}
+		}
+		
+		Loop %planetCount% {
+			currentPlanet = listOfPlanets[currentPlanet]
+			currentPlanet.upgrade()
+			if (currentPlanet.isFullyUpgraded() = false) {
+				allPlanetsComplete := false
+			}
+			
 		
 		}
-	
-	
-	
 	}
 }
 
@@ -67,7 +73,6 @@ navigateToNextPlanet() {
 
 sendShip() {
 }
-
 
 Class Research{
 
@@ -93,7 +98,6 @@ Class PlanetTemplate{
 		this.numShips := numShips
 		this.shipLvl := shipLvl
 	}
-
 }
 
 Class Planet{
@@ -235,7 +239,6 @@ Class Planet{
 		}
 		return true
 	}
-	
 }
 
 Class Ship{
@@ -251,19 +254,19 @@ Class Ship{
 	}
 	
 	upgrade() {
-		x := 1195
-		y := this.getYCoordBasedOnShipNr()
-		variation := 0
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			this.fuelTankLvl := this.fuelTankLvl + 1
-			;MsgBox, Found.
-		} else {
-			;MsgBox, That color was not found in the specified region.
+		if (this.shipLvl < this.desiredShipLvl) {
+			x := 1195
+			y := this.getYCoordBasedOnShipNr()
+			variation := 0
+			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+			if not ErrorLevel {
+				MouseClick, left, x, y
+				this.fuelTankLvl := this.fuelTankLvl + 1
+				;MsgBox, Found.
+			} else {
+				;MsgBox, That color was not found in the specified region.
+			}
 		}
-	
-	
 	}
 	
 	getYCoordBasedOnShipNr() {
@@ -271,9 +274,7 @@ Class Ship{
 			return 817
 		} else if (this.shipLvl = 2) {
 			return 849
-		}
-			
+		}			
 	}
-
 }
 
