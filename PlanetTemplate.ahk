@@ -117,6 +117,7 @@ Class Planet{
 		this.upgradeFuelGen()
 		this.upgradeFuelTank()
 		this.upgradeHanger()
+		this.upgradeShips()
 	}
 	
 	upgradePowerPlant() {
