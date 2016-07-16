@@ -38,7 +38,7 @@ main() {
 				allPlanetsComplete := false
 			}
 			if (currentPlanetCursor = planetCount) {
-				navigateToFirstPlanet()
+				navigateToFirstPlanet(planetCount)
 				currentPlanetCursor := 1
 			} else {
 				navigateToNextPlanet()
@@ -47,15 +47,6 @@ main() {
 			}
 		}
 		
-		Loop %planetCount% {
-			currentPlanet = listOfPlanets[currentPlanet]
-			currentPlanet.upgrade()
-			if (currentPlanet.isFullyUpgraded() = false) {
-				allPlanetsComplete := false
-			}
-			
-		
-		}
 	}
 }
 
@@ -65,7 +56,8 @@ updateResearch() {
 updateUpgrades() {
 }
 
-navigateToFirstPlanet() {
+navigateToFirstPlanet(planetCount) {
+	
 }
 
 navigateToNextPlanet() {
@@ -261,7 +253,7 @@ Class Ship{
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
-				this.fuelTankLvl := this.fuelTankLvl + 1
+				this.shipLvl := this.shipLvl + 1
 				;MsgBox, Found.
 			} else {
 				;MsgBox, That color was not found in the specified region.
