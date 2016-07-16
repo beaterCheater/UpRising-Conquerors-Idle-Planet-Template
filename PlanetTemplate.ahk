@@ -16,7 +16,7 @@ t::
 test() {
 	planetTemplate := new PlanetTemplate(10,10,10,10,10,1)
 	myPlanet := new Planet(planetTemplate)
-	myPlanet.upgradePowerPlant()
+	myPlanet.upgradeFuelGen()
 }
 
 main() {
@@ -107,6 +107,7 @@ Class Planet{
 	this.hangarLvl := 0
 	this.PlanetTemplate := planetTemplate
 	this.upgradeAvailableColor := "0xFFFFFF"
+	this.listOfShips := Array()
 	}
 	
 	upgrade() {
@@ -124,49 +125,109 @@ Class Planet{
 		variation := 0
 		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 		if not ErrorLevel {
-			MouseClick, left, Px, Py
+			MouseClick, left, x, y
 			this.powerPlantLvl := this.powerPlantLvl + 1
 			;MsgBox, Found.
 		} else {
-			MsgBox, That color was not found in the specified region.
+			;MsgBox, That color was not found in the specified region.
 		}
 	}
 	
 	upgradeMaterialExtractor() {
-		
-		this.materialExtractorLvl := this.materialExtractorLvl + 1
+		x := 1189
+		y := 543
+		variation := 0
+		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+		if not ErrorLevel {
+			MouseClick, left, x, y
+			this.materialExtractorLvl := this.materialExtractorLvl + 1
+			;MsgBox, Found.
+		} else {
+			;MsgBox, That color was not found in the specified region.
+		}
 	}
 	
 	upgradeWareHouse() {
-	
-		this.warehouseLvl := this.warehouseLvl + 1
+		x := 1189
+		y := 606
+		variation := 0
+		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+		if not ErrorLevel {
+			MouseClick, left, x, y
+			this.warehouseLvl := this.warehouseLvl + 1
+			;MsgBox, Found.
+		} else {
+			;MsgBox, That color was not found in the specified region.
+		}
 	}
 	
 	upgradeFuelGen() {
-	
-		this.fuelGenLvl := this.fuelGenLvl + 1
+		x := 1195
+		y := 661
+		variation := 0
+		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+		if not ErrorLevel {
+			MouseClick, left, x, y
+			this.fuelGenLvl := this.fuelGenLvl + 1
+			;MsgBox, Found.
+		} else {
+			;MsgBox, That color was not found in the specified region.
+		}
 	}
 	
 	upgradeFuelTank() {
-	
-		this.fuelTankLvl := this.fuelTankLvl + 1
+		x := 1195
+		y := 716
+		variation := 0
+		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+		if not ErrorLevel {
+			MouseClick, left, x, y
+			this.fuelTankLvl := this.fuelTankLvl + 1
+			;MsgBox, Found.
+		} else {
+			;MsgBox, That color was not found in the specified region.
+		}
 	}
 	
 	upgradeHanger() {
-	
-		this.hangarLvl := this.hangarLvl + 1
+		x := 1195
+		y := 716
+		variation := 0
+		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+		if not ErrorLevel {
+			MouseClick, left, x, y
+			this.hangarLvl := this.hangarLvl + 1
+			this.listOfShips.Push(new Ship(this.planetTemplate.shipLvl))
+			;MsgBox, Found.
+		} else {
+			;MsgBox, That color was not found in the specified region.
+		}
 	}
 	
 	isFullyUpgraded() {
-		return (this.planetTemplate.powerPlantLvl = this.powerPlantLvl) and (this.planetTemplate.materialExtractorLvl = this.materialExtractorLvl) and (this.planetTemplate.warehouseLvl = this.warehouseLvl) and (this.planetTemplate.fuelGenLvl = this.fuelGenLvl) and (this.planetTemplate.fuelTankLvl = this.fuelTankLvl) and (this.planetTemplate.hangarLvl = this.hangarLvl)
+		return (this.planetTemplate.powerPlantLvl = this.powerPlantLvl) and (this.planetTemplate.materialExtractorLvl = this.materialExtractorLvl) and (this.planetTemplate.warehouseLvl = this.warehouseLvl) and (this.planetTemplate.fuelGenLvl = this.fuelGenLvl) and (this.planetTemplate.fuelTankLvl = this.fuelTankLvl) and (this.planetTemplate.hangarLvl = this.hangarLvl) and areAllShipsUpgraded()
+	}
+	
+	areAllShipsUpgraded() {
+		for ship in listOfShips {
+			if not ship.isShipFullyUpgraded() {
+				return false
+			}
+		}
+		return true
 	}
 	
 }
 
 Class Ship{
 
-	_New(){
-		this.shipLvl := 0
+	_New(desiredShipLvl){
+		this.shipLvl := 1
+		this.desiredShipLvl := desiredShipLvl
+	}
+	
+	isShipFullyUpgraded() {
+		return (this.shipLvl = this.desiredShipLvl)
 	}
 
 }
