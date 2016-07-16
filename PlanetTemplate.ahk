@@ -9,11 +9,21 @@ p::
 o::
 	ExitApp
 
+t::	
+	test()
+	return
+	
+test() {
+	planetTemplate := new PlanetTemplate(10,10,10,10,10,1)
+	myPlanet := new Planet(planetTemplate)
+	myPlanet.upgradePowerPlant()
+}
+
 main() {
 	planetTemplate := new PlanetTemplate(10,10,10,10,10,1)
 	allPlanetsComplete := false
 	listOfPlanets := Array()
-	listOfPlanets.Push(new Planet{planetTemplate))
+	listOfPlanets.Push(new Planet(planetTemplate))
 	planetCount := 1
 	
 	while (allPlanetsComplete = false) {
@@ -59,7 +69,7 @@ sendShip() {
 }
 
 
-Class Research() {
+Class Research{
 
 	__New() {
 		this.radiantLvl := 1
@@ -96,12 +106,59 @@ Class Planet{
 	this.fuelTankLvl := 0
 	this.hangarLvl := 0
 	this.PlanetTemplate := planetTemplate
+	this.upgradeAvailableColor := "0xFFFFFF"
+	}
 	
 	upgrade() {
+		this.upgradePowerPlant()
+		this.upgradeMaterialExtractor()
+		this.upgradeWareHouse()
+		this.upgradeFuelGen()
+		this.upgradeFuelTank()
+		this.upgradeHanger()
+	}
 	
+	upgradePowerPlant() {
+		x := 1187
+		y := 484
+		variation := 0
+		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
+		if not ErrorLevel {
+			MouseClick, left, Px, Py
+			this.powerPlantLvl := this.powerPlantLvl + 1
+			;MsgBox, Found.
+		} else {
+			MsgBox, That color was not found in the specified region.
+		}
+	}
+	
+	upgradeMaterialExtractor() {
+		
+		this.materialExtractorLvl := this.materialExtractorLvl + 1
+	}
+	
+	upgradeWareHouse() {
+	
+		this.warehouseLvl := this.warehouseLvl + 1
+	}
+	
+	upgradeFuelGen() {
+	
+		this.fuelGenLvl := this.fuelGenLvl + 1
+	}
+	
+	upgradeFuelTank() {
+	
+		this.fuelTankLvl := this.fuelTankLvl + 1
+	}
+	
+	upgradeHanger() {
+	
+		this.hangarLvl := this.hangarLvl + 1
 	}
 	
 	isFullyUpgraded() {
+		return (this.planetTemplate.powerPlantLvl = this.powerPlantLvl) and (this.planetTemplate.materialExtractorLvl = this.materialExtractorLvl) and (this.planetTemplate.warehouseLvl = this.warehouseLvl) and (this.planetTemplate.fuelGenLvl = this.fuelGenLvl) and (this.planetTemplate.fuelTankLvl = this.fuelTankLvl) and (this.planetTemplate.hangarLvl = this.hangarLvl)
 	}
 	
 }
