@@ -14,7 +14,8 @@ t::
 	return
 	
 test() {
-	sendShip()
+	research := new Research()
+	research.upgrade()
 }
 
 main() {
@@ -117,86 +118,85 @@ Class Research{
 	upgradeCosmic() {
 		x := 1121
 		y := 861
-		variation := 10
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.researchAvailableColor, variation, Fast
+		variation := 60
+		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
 			this.cosmicLvl := this.cosmicLvl + 1
-			;MsgBox, Found.
+			;MsgBox, Cosmic Found.
 		} else {
-			;MsgBox, That color was not found in the specified region.
+			;MsgBox, Cosmic not found.
 		}
 	}
 	
 	upgradeRadiant() {
 		x := 791
 		y := 557
-		variation := 10
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.researchAvailableColor, variation, Fast
+		variation := 50
+		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
 			this.radiantLvl := this.radiantLvl + 1
-			;MsgBox, Found.
+			;MsgBox, Radiant found.
 		} else {
-			;MsgBox, That color was not found in the specified region.
+			;MsgBox, Radiant not found
 		}
 	}
 	
 	upgradeCombustion() {
 		x := 794
 		y := 710
-		variation := 10
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.researchAvailableColor, variation, Fast
+		variation := 50
+		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
 			this.combustionLvl := this.combustionLvl + 1
-			;MsgBox, Found.
+			;MsgBox, Combustion Found
 		} else {
-			;MsgBox, That color was not found in the specified region.
+			;MsgBox, Combustion not found.
 		}
 	}
 	
 	upgradeIonic() {
 		x := 1121
 		y := 562
-		variation := 10
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.researchAvailableColor, variation, Fast
+		variation := 60
+		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
 			this.ionicLvl := this.ionicLvl + 1
-			;MsgBox, Found.
+			;MsgBox, Ionic found.
 		} else {
-			;MsgBox, That color was not found in the specified region.
+			;MsgBox, Ionic found
 		}
 	}
 	
 	upgradePicobots() {
 		x := 1121
 		y := 710
-		variation := 10
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.researchAvailableColor, variation, Fast
+		variation := 60
+		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
 			this.picobotsLvl := this.picobotsLvl + 1
-			;MsgBox, Found.
+			;MsgBox, Picobots found.
 		} else {
-			;MsgBox, That color was not found in the specified region.
+			;MsgBox, Picobots not found.
 		}
 	}
 	
 	upgradeAtmospheric() {
 		x := 794
 		y := 863
-		variation := 10
-		PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.researchAvailableColor, variation, Fast
+		variation := 60
+		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
 			this.atmosphericLvl := this.atmosphericLvl + 1
-			;MsgBox, Found.
+			;MsgBox, Atmospheric found.
 		} else {
-			;MsgBox, That color was not found in the specified region.
+			;MsgBox, Atmospheric not found.
 		}
-	
 	}
 }
 
