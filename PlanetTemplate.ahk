@@ -100,17 +100,17 @@ Class Research{
 	}
 	
 	upgrade() {
-		upgradeCosmic()
+		this.upgradeCosmic()
 		Sleep, 200
-		upgradeRadiant()
+		this.upgradeRadiant()
 		Sleep, 200
-		upgradeCombustion()
+		this.upgradeCombustion()
 		Sleep, 200
-		upgradeIonic()
+		this.upgradeIonic()
 		Sleep, 200
-		upgradePicobots()
+		this.upgradePicobots()
 		Sleep, 200
-		upgradeAtmospheric()
+		this.upgradeAtmospheric()
 		Sleep, 200
 	}
 	
