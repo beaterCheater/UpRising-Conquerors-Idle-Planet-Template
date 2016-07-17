@@ -69,15 +69,15 @@ navigateToNextPlanet() {
 sendShip() {
 	x := 1232
 	y := 511
-	variation := 5
+	variation := 60
 	colorToLookFor := "0x72A8AD"
-	PixelSearch, Px, Py, x-2, y-2, x+2, y+2, colorToLookFor, variation, Fast
+	PixelSearch, Px, Py, x-5, y-5, x+5, y+5, colorToLookFor, variation, Fast
 	if not ErrorLevel {
-		;MouseClick, left, x, y
-		MsgBox, Found.
+		MouseClick, left, x, y
+		;MsgBox, Found.
 		Sleep, 200
 	} else {
-		MsgBox, That color was not found in the specified region.
+		;MsgBox, Send ship button not found.
 	}
 }
 
