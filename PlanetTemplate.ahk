@@ -14,9 +14,7 @@ t::
 	return
 	
 test() {
-	;MsgBox, Test2
-	ship1 := new Ship(3,2)
-	ship1.upgradeShip()
+	sendShip()
 }
 
 main() {
@@ -69,6 +67,23 @@ navigateToNextPlanet() {
 }
 
 sendShip() {
+	x := 1232
+	y := 511
+	variation := 5
+	colorToLookFor := "0x72A8AD"
+	PixelSearch, Px, Py, x-2, y-2, x+2, y+2, colorToLookFor, variation, Fast
+	if not ErrorLevel {
+		;MouseClick, left, x, y
+		MsgBox, Found.
+	} else {
+		MsgBox, That color was not found in the specified region.
+	}
+}
+
+backToGalaxy() {
+	x := 1074
+	y := 380
+	MouseClick, left, x, y
 }
 
 Class Research{
