@@ -10,7 +10,7 @@ o::
 	ExitApp
 
 t::	
-	test()
+	sendShip()
 	return
 	
 test() {
@@ -19,10 +19,10 @@ test() {
 }
 
 main() {
-	planetTemplate := new PlanetTemplate(10,10,10,10,10,1,1,5)
+	planetTemplate := new PlanetTemplate(45,40,20,35,20,3,21)
 	allPlanetsComplete := false
 	listOfPlanets := Array()
-	planetCount := 5
+	planetCount := 20
 	research := new Research()
 	
 	Loop %planetCount% {
@@ -66,28 +66,30 @@ updateUpgrades() {
 navigateToFirstPlanet(jumpsBack) {
 	Loop %jumpsBack% {
 		Send {a}
-		Sleep, 500
+		Sleep, 300
 	}
 }
 
 navigateToNextPlanet() {
 	Send {d}
-	Sleep, 500
+	Sleep, 200
 }
 
 sendShip() {
-	x := 1232
-	y := 511
-	variation := 60
-	colorToLookFor := "0x72A8AD"
-	PixelSearch, Px, Py, x-5, y-5, x+5, y+5, colorToLookFor, variation, Fast
-	if not ErrorLevel {
+	x := 1229
+	y := 518
+	variations := 80
+	ImageSearch, coordX, coordY, 1114, 484, 1266, 532, *%variations% fig/sendShip.png
+	if (ErrorLevel = 0) {
 		MouseClick, left, x, y
-		;MsgBox, Found.
-		Sleep, 200
-	} else {
-		;MsgBox, Send ship button not found.
+		Sleep, 300
+		;MsgBox, Found image.
+	} else if (ErrorLevel = 1) {
+		;MsgBox Image not found
+	} else if (ErrorLevel = 2) {
+		;MsgBox Loading error
 	}
+
 }
 
 backToGalaxy() {
@@ -211,14 +213,13 @@ Class Research{
 
 Class PlanetTemplate{
 
-	__New(powerPlantLvl, materialExtractorLvl, warehouseLvl, fuelGenLvl, fuelTankLvl, hangarLvl, numShips, shipLvl){
+	__New(powerPlantLvl, materialExtractorLvl, warehouseLvl, fuelGenLvl, fuelTankLvl, hangarLvl, shipLvl){
 		this.powerPlantLvl := powerPlantLvl
 		this.materialExtractorLvl := materialExtractorLvl
 		this.warehouseLvl := warehouseLvl
 		this.fuelGenLvl := fuelGenLvl
 		this.fuelTankLvl := fuelTankLvl
 		this.hangarLvl := hangarLvl
-		this.numShips := numShips
 		this.shipLvl := shipLvl
 	}
 }
@@ -251,6 +252,8 @@ Class Planet{
 		Sleep, 500
 		this.upgradeFuelTank()
 		Sleep, 500
+		this.upgradeShips()
+		Sleep, 400
 	}
 	
 	upgradePowerPlant() {
@@ -342,7 +345,7 @@ Class Planet{
 			if not ErrorLevel {
 				MouseClick, left, x, y
 				this.hangarLvl := this.hangarLvl + 1
-				this.listOfShips.Push(new Ship(this.planetTemplate.shipLvl))
+				this.listOfShips.Push(new Ship(this.planetTemplate.shipLvl, this.hangarLvl))
 				;MsgBox, Found.
 			} else {
 				;MsgBox, That color was not found in the specified region.
@@ -351,7 +354,8 @@ Class Planet{
 	}
 	
 	upgradeShips() {
-		for index, ship in listOfShips {
+		;MsgBox, upgrade ships.
+		for index, ship in this.listOfShips {
 			ship.upgradeShip()
 			Sleep, 500
 		}
@@ -395,7 +399,7 @@ Class Ship{
 				this.shipLvl := this.shipLvl + 1
 				;MsgBox, Found.
 			} else {
-				MsgBox, Ship upgrade not found, %y%
+				;MsgBox, Ship upgrade not found, %y%
 			}
 		}
 	}
