@@ -10,7 +10,7 @@ o::
 	ExitApp
 
 t::	
-	sendShip()
+	cannotSendShip()
 	return
 	
 test() {
@@ -23,6 +23,7 @@ main() {
 	allPlanetsComplete := false
 	listOfPlanets := Array()
 	planetCount := 20
+	currentPlanetCount := 1
 	research := new Research()
 	
 	Loop %planetCount% {
@@ -39,10 +40,14 @@ main() {
 				allPlanetsComplete := false
 			}
 			navigateToNextPlanet()
-			sendShip()	
-			if (currentPlanetCursor = planetCount) {
-				navigateToFirstPlanet(planetCount)
-				currentPlanetCursor := 1
+			if (sendShip() = true) {
+				navigateToFirstPlanet(currentPlanetCursor)
+				currentPlanetCount := currentPlanetCount + 1
+				break
+			}
+			if (currentPlanetCursor = planetCount) or (currentPlanetCount = currentPlanetCursor){
+				navigateToFirstPlanet(currentPlanetCursor)
+				break
 			}
 			currentPlanetCursor := currentPlanetCursor + 1
 		}
@@ -58,6 +63,13 @@ navigateToResearch() {
 	y := 377
 	MouseClick, left, x, y
 	Sleep, 400
+}
+
+navigateToUpgrades() {
+	x := 537
+	y := 369
+	MouseClick, left, x, y
+	Sleep,300
 }
 
 updateUpgrades() {
@@ -79,9 +91,11 @@ sendShip() {
 	x := 1229
 	y := 518
 	variations := 80
+	sentShip := false
 	ImageSearch, coordX, coordY, 1114, 484, 1266, 532, *%variations% fig/sendShip.png
 	if (ErrorLevel = 0) {
 		MouseClick, left, x, y
+		sentShip := true
 		Sleep, 300
 		;MsgBox, Found image.
 	} else if (ErrorLevel = 1) {
@@ -89,7 +103,19 @@ sendShip() {
 	} else if (ErrorLevel = 2) {
 		;MsgBox Loading error
 	}
+	return sentShip
+}
 
+cannotSendShip() {
+	variations := 220
+	ImageSearch, coordX, coordY, 1110, 484, 1280, 532, *%variations% fig/cannotSendShip.png
+	if (ErrorLevel = 0) {
+		MsgBox, Found image.
+	} else if (ErrorLevel = 1) {
+		MsgBox Image not found
+	} else if (ErrorLevel = 2) {
+		MsgBox Loading error
+	}
 }
 
 backToGalaxy() {
@@ -392,7 +418,7 @@ Class Ship{
 		if (this.shipLvl < this.desiredShipLvl) {
 			x := 1206
 			y := this.getYCoordBasedOnShipNr()
-			variation := 50
+			variation := 40
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeShipAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
