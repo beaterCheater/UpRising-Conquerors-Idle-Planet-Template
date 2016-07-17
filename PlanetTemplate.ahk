@@ -19,37 +19,45 @@ test() {
 }
 
 main() {
-	planetTemplate := new PlanetTemplate(10,10,10,10,10,1)
+	planetTemplate := new PlanetTemplate(10,10,10,10,10,1,1,5)
 	allPlanetsComplete := false
 	listOfPlanets := Array()
-	listOfPlanets.Push(new Planet(planetTemplate))
-	planetCount := 1
+	planetCount := 5
+	research := new Research()
+	
+	Loop %planetCount% {
+		listOfPlanets.Push(new Planet(planetTemplate))
+	}
 	
 	while (allPlanetsComplete = false) {
-		navigateToResearch()
-		updateUpgrades()
 		currentPlanetCursor := 1
 		allPlanetsComplete := true
 		
-		for planet in listOfPlanets {
+		for index, planet in listOfPlanets {
 			planet.upgrade()
 			if (planet.isFullyUpgraded() = false) {
 				allPlanetsComplete := false
 			}
+			navigateToNextPlanet()
+			sendShip()	
 			if (currentPlanetCursor = planetCount) {
-				navigateToFirstPlanet(planetCount-1)
+				navigateToFirstPlanet(planetCount)
 				currentPlanetCursor := 1
-			} else {
-				navigateToNextPlanet()
-				sendShip()
-				currentPlanetCursor := currentPlanetCursor + 1
 			}
+			currentPlanetCursor := currentPlanetCursor + 1
 		}
-		
+		navigateToResearch()
+		research.upgrade()
+		updateUpgrades()
+		backToGalaxy()
 	}
 }
 
 navigateToResearch() {
+	x := 620
+	y := 377
+	MouseClick, left, x, y
+	Sleep, 400
 }
 
 updateUpgrades() {
@@ -58,13 +66,13 @@ updateUpgrades() {
 navigateToFirstPlanet(jumpsBack) {
 	Loop %jumpsBack% {
 		Send {a}
-		Sleep, 100
+		Sleep, 500
 	}
 }
 
 navigateToNextPlanet() {
 	Send {d}
-	Sleep, 200
+	Sleep, 500
 }
 
 sendShip() {
@@ -86,6 +94,7 @@ backToGalaxy() {
 	x := 1074
 	y := 380
 	MouseClick, left, x, y
+	Sleep, 400
 }
 
 Class Research{
@@ -202,7 +211,7 @@ Class Research{
 
 Class PlanetTemplate{
 
-	__New(powerPlantLvl, materialExtractorLvl, warehouseLvl, fuelGenLvl, fuelTankLvl, hangarLvl, numShips, shipsLvl){
+	__New(powerPlantLvl, materialExtractorLvl, warehouseLvl, fuelGenLvl, fuelTankLvl, hangarLvl, numShips, shipLvl){
 		this.powerPlantLvl := powerPlantLvl
 		this.materialExtractorLvl := materialExtractorLvl
 		this.warehouseLvl := warehouseLvl
@@ -229,19 +238,18 @@ Class Planet{
 	}
 	
 	upgrade() {
+		Sleep, 200
 		this.upgradePowerPlant()
-		Sleep, 500
-		this.upgradeMaterialExtractor()
-		Sleep, 500
-		this.upgradeWareHouse()
-		Sleep, 500
-		this.upgradeFuelGen()
-		Sleep, 500
-		this.upgradeFuelTank()
 		Sleep, 500
 		this.upgradeHanger()
 		Sleep, 500
-		this.upgradeShips()
+		this.upgradeMaterialExtractor()
+		Sleep, 500
+		this.upgradeFuelGen()
+		Sleep, 500
+		this.upgradeWareHouse()
+		Sleep, 500
+		this.upgradeFuelTank()
 		Sleep, 500
 	}
 	
@@ -249,14 +257,14 @@ Class Planet{
 		if (this.powerPlantLvl < this.planetTemplate.powerPlantLvl) {
 			x := 1187
 			y := 484
-			variation := 0
+			variation := 5
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
 				this.powerPlantLvl := this.powerPlantLvl + 1
 				;MsgBox, Found.
 			} else {
-				;MsgBox, That color was not found in the specified region.
+				;MsgBox, Powerplant not found
 			}
 		}
 	}
@@ -265,7 +273,7 @@ Class Planet{
 		if (this.materialExtractorLvl < this.planetTemplate.materialExtractorLvl) {
 			x := 1189
 			y := 543
-			variation := 0
+			variation := 5
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
@@ -281,7 +289,7 @@ Class Planet{
 		if (this.warehouseLvl < this.planetTemplate.warehouseLvl) {
 			x := 1189
 			y := 606
-			variation := 0
+			variation := 5
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
@@ -297,7 +305,7 @@ Class Planet{
 		if (this.fuelGenLvl < this.planetTemplate.fuelGenLvl) {
 			x := 1195
 			y := 661
-			variation := 0
+			variation := 5
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
@@ -313,7 +321,7 @@ Class Planet{
 		if (this.fuelTankLvl < this.planetTemplate.fuelTankLvl) {
 			x := 1195
 			y := 716
-			variation := 0
+			variation := 5
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
@@ -328,8 +336,8 @@ Class Planet{
 	upgradeHanger() {
 		if (this.hangarLvl < this.planetTemplate.hangarLvl) {
 			x := 1195
-			y := 716
-			variation := 0
+			y := 777
+			variation := 10
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
@@ -343,7 +351,7 @@ Class Planet{
 	}
 	
 	upgradeShips() {
-		for ship in listOfShips {
+		for index, ship in listOfShips {
 			ship.upgradeShip()
 			Sleep, 500
 		}
