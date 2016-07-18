@@ -25,6 +25,10 @@ main() {
 	planetCount := 20
 	currentPlanetCount := 1
 	research := new Research()
+	boughtUpgradesPartOne := false
+	planetCountToBuyUpgradesPartOne := 5
+	researchUpgradeInterval := 4
+	researchTimeCount := 1
 	
 	Loop %planetCount% {
 		listOfPlanets.Push(new Planet(planetTemplate))
@@ -35,27 +39,48 @@ main() {
 		allPlanetsComplete := true
 		
 		for index, planet in listOfPlanets {
+			if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
+				boughtUpgradesPartOne := true
+				navigateToResearch()
+				buyUpgradesPartOne()
+			}
+			
+		
 			planet.upgrade()
 			if (planet.isFullyUpgraded() = false) {
 				allPlanetsComplete := false
 			}
 			navigateToNextPlanet()
+			
+			
 			if (sendShip() = true) {
 				navigateToFirstPlanet(currentPlanetCursor)
 				currentPlanetCount := currentPlanetCount + 1
 				break
 			}
+			
+			; Check for end of planet limit or havent bought enough planets.
 			if (currentPlanetCursor = planetCount) or (currentPlanetCount = currentPlanetCursor){
 				navigateToFirstPlanet(currentPlanetCursor)
 				break
 			}
 			currentPlanetCursor := currentPlanetCursor + 1
 		}
-		navigateToResearch()
-		research.upgrade()
-		updateUpgrades()
-		backToGalaxy()
-	}
+		
+		if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
+			boughtUpgradesPartOne := true
+			navigateToUpgrades()
+			buyUpgradesPartOne()
+			backToGalaxy()
+		}
+		if (researchTimeCount = researchUpgradeInterval) {
+			navigateToResearch()
+			research.upgrade()
+			backToGalaxy()
+			researchTimeCount := 0
+		}
+		researchTimeCount := researchTimeCount + 1
+		}
 }
 
 navigateToResearch() {
@@ -69,10 +94,16 @@ navigateToUpgrades() {
 	x := 537
 	y := 369
 	MouseClick, left, x, y
-	Sleep,300
+	Sleep, 300
 }
 
-updateUpgrades() {
+buyUpgradesPartOne() {
+	x := 1125
+	y := [486, 561, 637, 718, 790, 870]
+	for index, ycoord in y {
+		MouseClick, left, x, ycoord
+		Sleep,200
+	}
 }
 
 navigateToFirstPlanet(jumpsBack) {
@@ -366,7 +397,7 @@ Class Planet{
 		if (this.hangarLvl < this.planetTemplate.hangarLvl) {
 			x := 1195
 			y := 777
-			variation := 10
+			variation := 5
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
@@ -418,7 +449,7 @@ Class Ship{
 		if (this.shipLvl < this.desiredShipLvl) {
 			x := 1206
 			y := this.getYCoordBasedOnShipNr()
-			variation := 40
+			variation := 50
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeShipAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
