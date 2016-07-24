@@ -10,7 +10,9 @@ o::
 	ExitApp
 
 t::	
-	cannotSendShip()
+	planetTemplate := new PlanetTemplate(45,40,20,35,20,3,21)
+	planet := new Planet(planetTemplate)
+	planet.upgradeHanger()
 	return
 	
 g::
@@ -85,7 +87,7 @@ main() {
 			researchTimeCount := 0
 		}
 		researchTimeCount := researchTimeCount + 1
-		}
+	}
 }
 
 navigateToResearch() {
@@ -164,17 +166,72 @@ backToGalaxy() {
 Class Overview {
 
 	__New() {
-	
+		this.planetsToUpgrade := 20
+		this.planetTemplate := new PlanetTemplate(45,40,20,35,20,3,21)
+		this.research := new Research()
+		this.listOfPlanets := Array()
+		this.setUpListOfPlanets()
 	}
 	
-	startGui() {
-		static vhere := ""
-		Gui, Settings: New
-		Gui, Add, Text,, Here:
-		Gui, Add, Edit, vhere
-		Gui, Show
+	setUpListOfPlanets() {
+		Loop %this.planetsToUpgrade% {
+			this.listOfPlanets.Push(new Planet(this.planetTemplate))
+		}
 	}
-
+	
+	
+	
+	upgradeLoop() {
+		allPlanetsComplete := false
+		currentPlanetCount := 1
+		boughtUpgradesPartOne := false
+		planetCountToBuyUpgradesPartOne := 5
+		researchUpgradeInterval := 3
+		researchTimeCount := 1
+		
+		while (allPlanetsComplete = false) {
+			allPlanetsComplete = true
+			currentPlanetCursor := 1
+		
+			for index, planet this.listOfPlanets {
+				if (planet.isFullyUpgraded()) {
+					navigateToNextPlanet()
+					continue
+				} else {
+					allPlanetsComplete := false
+				}
+				planet.upgrade()
+				navigateToNextPlanet()
+				
+				if sendShip() {
+					navigateToFirstPlanet(currentPlanetCursor)
+					currentPlanetCount := currentPlanetCount + 1
+					break
+				}
+				
+				; Check for end of planet limit or havent bought enough planets.
+				if (currentPlanetCursor = planetCount) or (currentPlanetCount = currentPlanetCursor){
+					navigateToFirstPlanet(currentPlanetCursor)
+					break
+				}
+				currentPlanetCursor := currentPlanetCursor + 1
+			}
+			
+			if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
+				boughtUpgradesPartOne := true
+				navigateToUpgrades()
+				buyUpgradesPartOne()
+				backToGalaxy()
+			}
+			if (researchTimeCount = researchUpgradeInterval) {
+				navigateToResearch()
+				research.upgrade()
+				backToGalaxy()
+				researchTimeCount := 0
+			}
+			researchTimeCount := researchTimeCount + 1
+		}	
+	}
 }
 
 Class Research{
@@ -339,13 +396,9 @@ Class Planet{
 			x := 1187
 			y := 484
 			variation := 5
-			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-			if not ErrorLevel {
+			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
 				this.powerPlantLvl := this.powerPlantLvl + 1
-				;MsgBox, Found.
-			} else {
-				;MsgBox, Powerplant not found
 			}
 		}
 	}
@@ -355,13 +408,9 @@ Class Planet{
 			x := 1189
 			y := 543
 			variation := 5
-			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-			if not ErrorLevel {
+			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
 				this.materialExtractorLvl := this.materialExtractorLvl + 1
-				;MsgBox, Found.
-			} else {
-				;MsgBox, That color was not found in the specified region.
 			}
 		}
 	}
@@ -371,13 +420,9 @@ Class Planet{
 			x := 1189
 			y := 606
 			variation := 5
-			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-			if not ErrorLevel {
+			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
 				this.warehouseLvl := this.warehouseLvl + 1
-				;MsgBox, Found.
-			} else {
-				;MsgBox, That color was not found in the specified region.
 			}
 		}
 	}
@@ -387,13 +432,9 @@ Class Planet{
 			x := 1195
 			y := 661
 			variation := 5
-			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-			if not ErrorLevel {
+			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
 				this.fuelGenLvl := this.fuelGenLvl + 1
-				;MsgBox, Found.
-			} else {
-				;MsgBox, That color was not found in the specified region.
 			}
 		}
 	}
@@ -403,30 +444,24 @@ Class Planet{
 			x := 1195
 			y := 716
 			variation := 5
-			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-			if not ErrorLevel {
+			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
 				this.fuelTankLvl := this.fuelTankLvl + 1
-				;MsgBox, Found.
-			} else {
-				;MsgBox, That color was not found in the specified region.
 			}
 		}
 	}
 	
 	upgradeHanger() {
 		if (this.hangarLvl < this.planetTemplate.hangarLvl) {
-			x := 1195
-			y := 777
-			variation := 4
-			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
-			if not ErrorLevel {
-				MouseClick, left, x, y
+			x2 := 1262
+			y2 := 786
+			variation := 15
+			if (pixelSearch(x2, y2, this.upgradeAvailableColor, variation)) {
+				;MouseClick, left, x, y
 				this.hangarLvl := this.hangarLvl + 1
-				this.listOfShips.Push(new Ship(this.planetTemplate.shipLvl, this.hangarLvl))
-				;MsgBox, Found.
+				ToolTip, Hangar found, 0, 0
 			} else {
-				;MsgBox, That color was not found in the specified region.
+				ToolTip, Hangar not found, 0, 0
 			}
 		}
 	}
