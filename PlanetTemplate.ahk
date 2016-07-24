@@ -13,6 +13,11 @@ t::
 	cannotSendShip()
 	return
 	
+g::
+	overview := new Overview()
+	overview.startGui()
+	return
+	
 test() {
 	research := new Research()
 	research.upgrade()
@@ -27,7 +32,7 @@ main() {
 	research := new Research()
 	boughtUpgradesPartOne := false
 	planetCountToBuyUpgradesPartOne := 5
-	researchUpgradeInterval := 4
+	researchUpgradeInterval := 3
 	researchTimeCount := 1
 	
 	Loop %planetCount% {
@@ -154,6 +159,22 @@ backToGalaxy() {
 	y := 380
 	MouseClick, left, x, y
 	Sleep, 400
+}
+
+Class Overview {
+
+	__New() {
+	
+	}
+	
+	startGui() {
+		static vhere := ""
+		Gui, Settings: New
+		Gui, Add, Text,, Here:
+		Gui, Add, Edit, vhere
+		Gui, Show
+	}
+
 }
 
 Class Research{
@@ -298,17 +319,17 @@ Class Planet{
 	upgrade() {
 		Sleep, 200
 		this.upgradePowerPlant()
-		Sleep, 500
+		Sleep, 400
 		this.upgradeHanger()
-		Sleep, 500
+		Sleep, 400
 		this.upgradeMaterialExtractor()
-		Sleep, 500
+		Sleep, 400
 		this.upgradeFuelGen()
-		Sleep, 500
+		Sleep, 400
 		this.upgradeWareHouse()
-		Sleep, 500
+		Sleep, 400
 		this.upgradeFuelTank()
-		Sleep, 500
+		Sleep, 400
 		this.upgradeShips()
 		Sleep, 400
 	}
@@ -397,7 +418,7 @@ Class Planet{
 		if (this.hangarLvl < this.planetTemplate.hangarLvl) {
 			x := 1195
 			y := 777
-			variation := 5
+			variation := 4
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
@@ -414,7 +435,7 @@ Class Planet{
 		;MsgBox, upgrade ships.
 		for index, ship in this.listOfShips {
 			ship.upgradeShip()
-			Sleep, 500
+			Sleep, 400
 		}
 	}
 	
@@ -469,6 +490,15 @@ Class Ship{
 		} else if (this.shipNumber = 3) {
 			return 876
 		}
+	}
+}
+
+pixelSearch(xCenter, yCenter, colorToFind, variation) {
+	PixelSearch, Px, Py, xCenter-2, yCenter-2, xCenter+2, yCenter+2, colorToFind, variation, Fast
+	if not ErrorLevel {
+		return true
+	} else {
+		return false
 	}
 }
 
