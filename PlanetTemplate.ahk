@@ -10,23 +10,43 @@ o::
 	ExitApp
 
 t::	
-	planetTemplate := new PlanetTemplate(45,40,20,35,20,3,21)
-	planet := new Planet(planetTemplate)
-	planet.upgradeHanger()
+	
 	return
 	
 g::
 	overview := new Overview()
 	overview.startGui()
 	return
+
+
+;Global settings
+MOUSE_CLICK_DELAY := 100
+
+;Used for planet template
+POWER_PLANT_LVL := 45
+MATERIAL_EXTRACTOR_LVL := 40
+WAREHOUSE_LVL := 20
+FUEL_GEN_LVL := 35
+FUEL_TANK_LVL := 20
+HANGAR_LVL := 3
+SHIP_LVL := 21
+
+;Max planets 29
+PLANETS_TO_UPGRADE := 29
+
+;When to buy research and upgrades
+RESEARCH_UPGRADE_INTERVAL := 3
+PLANET_COUNT_TO_BUY_UPGRADES_1 := 5
+
 	
 test() {
+	;Test function used for simple testing of sections of code.
 	research := new Research()
 	research.upgrade()
 }
 
 main() {
-	planetTemplate := new PlanetTemplate(45,40,20,35,20,3,21)
+	planetTemplate := new PlanetTemplate(POWER_PLANT_LVL,40,20,35,20,3,21)
 	allPlanetsComplete := false
 	listOfPlanets := Array()
 	planetCount := 20
@@ -167,14 +187,15 @@ Class Overview {
 
 	__New() {
 		this.planetsToUpgrade := 20
-		this.planetTemplate := new PlanetTemplate(45,40,20,35,20,3,21)
+		this.planetTemplate := new PlanetTemplate(POWER_PLANT_LVL, MATERIAL_EXTRACTOR_LVL, WAREHOUSE_LVL, FUEL_GEN_LVL, FUEL_TANK_LVL, HANGAR_LVL, SHIP_LVL)
 		this.research := new Research()
 		this.listOfPlanets := Array()
 		this.setUpListOfPlanets()
 	}
 	
 	setUpListOfPlanets() {
-		Loop %this.planetsToUpgrade% {
+		loopIterations := this.planetsToUpgrade
+		Loop %loopIterations% {
 			this.listOfPlanets.Push(new Planet(this.planetTemplate))
 		}
 	}
@@ -193,7 +214,7 @@ Class Overview {
 			allPlanetsComplete = true
 			currentPlanetCursor := 1
 		
-			for index, planet this.listOfPlanets {
+			for index, planet in this.listOfPlanets {
 				if (planet.isFullyUpgraded()) {
 					navigateToNextPlanet()
 					continue
@@ -453,12 +474,15 @@ Class Planet{
 	
 	upgradeHanger() {
 		if (this.hangarLvl < this.planetTemplate.hangarLvl) {
-			x2 := 1262
-			y2 := 786
-			variation := 15
-			if (pixelSearch(x2, y2, this.upgradeAvailableColor, variation)) {
-				;MouseClick, left, x, y
+			x := 1262
+			y := 786
+			x2 := 1195
+			y2 := 781
+			variation := 13
+			if (pixelSearch(x, y, this.upgradeAvailableColor, variation)) and  (pixelSearch(x2, y2, this.upgradeAvailableColor, variation)){
+				MouseClick, left, x, y
 				this.hangarLvl := this.hangarLvl + 1
+				this.listOfShips.Push(new Ship(this.planetTemplate.shipLvl, this.hangarLvl))
 				ToolTip, Hangar found, 0, 0
 			} else {
 				ToolTip, Hangar not found, 0, 0
