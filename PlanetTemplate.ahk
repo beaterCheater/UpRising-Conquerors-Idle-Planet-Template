@@ -3,6 +3,8 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
+;It is recommended to have upgraded the first planet at least 1 in each building to start a ship.
+
 p::
 	main()
 	return
@@ -10,7 +12,7 @@ o::
 	ExitApp
 
 t::	
-	
+	overviewMain()
 	return
 	
 g::
@@ -43,6 +45,11 @@ test() {
 	;Test function used for simple testing of sections of code.
 	research := new Research()
 	research.upgrade()
+}
+
+overviewMain() {
+	overview := new Overview()
+	overview.upgradeLoop()
 }
 
 main() {
@@ -107,6 +114,77 @@ main() {
 			researchTimeCount := 0
 		}
 		researchTimeCount := researchTimeCount + 1
+	}
+}
+
+
+Class Overview {
+
+	__New() {
+		this.planetsToUpgrade := PLANETS_TO_UPGRADE
+		this.planetTemplate := new PlanetTemplate(POWER_PLANT_LVL, MATERIAL_EXTRACTOR_LVL, WAREHOUSE_LVL, FUEL_GEN_LVL, FUEL_TANK_LVL, HANGAR_LVL, SHIP_LVL)
+		this.research := new Research()
+		this.listOfPlanets := Array()
+		this.setUpListOfPlanets()
+	}
+	
+	setUpListOfPlanets() {
+		loopIterations := this.planetsToUpgrade
+		Loop %loopIterations% {
+			this.listOfPlanets.Push(new Planet(this.planetTemplate))
+		}
+	}
+	
+	upgradeLoop() {
+		allPlanetsComplete := false
+		currentPlanetCount := 1
+		boughtUpgradesPartOne := false
+		planetCountToBuyUpgradesPartOne := 5
+		researchUpgradeInterval := 3
+		researchTimeCount := 1
+		
+		while (allPlanetsComplete = false) {
+			allPlanetsComplete = true
+			currentPlanetCursor := 1
+		
+			for index, planet in this.listOfPlanets {
+				if (planet.isFullyUpgraded()) {
+					navigateToNextPlanet()
+					continue
+				} else {
+					allPlanetsComplete := false
+				}
+				planet.upgrade()
+				navigateToNextPlanet()
+				
+				if sendShip() {
+					navigateToFirstPlanet(currentPlanetCursor)
+					currentPlanetCount := currentPlanetCount + 1
+					break
+				}
+				
+				; Check for end of planet limit or havent bought enough planets.
+				if (currentPlanetCursor = planetCount) or (currentPlanetCount = currentPlanetCursor){
+					navigateToFirstPlanet(currentPlanetCursor)
+					break
+				}
+				currentPlanetCursor := currentPlanetCursor + 1
+			}
+			
+			if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
+				boughtUpgradesPartOne := true
+				navigateToUpgrades()
+				buyUpgradesPartOne()
+				backToGalaxy()
+			}
+			if (researchTimeCount = researchUpgradeInterval) {
+				navigateToResearch()
+				research.upgrade()
+				backToGalaxy()
+				researchTimeCount := 0
+			}
+			researchTimeCount := researchTimeCount + 1
+		}	
 	}
 }
 
@@ -181,78 +259,6 @@ backToGalaxy() {
 	y := 380
 	MouseClick, left, x, y
 	Sleep, 400
-}
-
-Class Overview {
-
-	__New() {
-		this.planetsToUpgrade := 20
-		this.planetTemplate := new PlanetTemplate(POWER_PLANT_LVL, MATERIAL_EXTRACTOR_LVL, WAREHOUSE_LVL, FUEL_GEN_LVL, FUEL_TANK_LVL, HANGAR_LVL, SHIP_LVL)
-		this.research := new Research()
-		this.listOfPlanets := Array()
-		this.setUpListOfPlanets()
-	}
-	
-	setUpListOfPlanets() {
-		loopIterations := this.planetsToUpgrade
-		Loop %loopIterations% {
-			this.listOfPlanets.Push(new Planet(this.planetTemplate))
-		}
-	}
-	
-	
-	
-	upgradeLoop() {
-		allPlanetsComplete := false
-		currentPlanetCount := 1
-		boughtUpgradesPartOne := false
-		planetCountToBuyUpgradesPartOne := 5
-		researchUpgradeInterval := 3
-		researchTimeCount := 1
-		
-		while (allPlanetsComplete = false) {
-			allPlanetsComplete = true
-			currentPlanetCursor := 1
-		
-			for index, planet in this.listOfPlanets {
-				if (planet.isFullyUpgraded()) {
-					navigateToNextPlanet()
-					continue
-				} else {
-					allPlanetsComplete := false
-				}
-				planet.upgrade()
-				navigateToNextPlanet()
-				
-				if sendShip() {
-					navigateToFirstPlanet(currentPlanetCursor)
-					currentPlanetCount := currentPlanetCount + 1
-					break
-				}
-				
-				; Check for end of planet limit or havent bought enough planets.
-				if (currentPlanetCursor = planetCount) or (currentPlanetCount = currentPlanetCursor){
-					navigateToFirstPlanet(currentPlanetCursor)
-					break
-				}
-				currentPlanetCursor := currentPlanetCursor + 1
-			}
-			
-			if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
-				boughtUpgradesPartOne := true
-				navigateToUpgrades()
-				buyUpgradesPartOne()
-				backToGalaxy()
-			}
-			if (researchTimeCount = researchUpgradeInterval) {
-				navigateToResearch()
-				research.upgrade()
-				backToGalaxy()
-				researchTimeCount := 0
-			}
-			researchTimeCount := researchTimeCount + 1
-		}	
-	}
 }
 
 Class Research{
