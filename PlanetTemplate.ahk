@@ -30,7 +30,7 @@ global PLANET_COUNT_TO_BUY_UPGRADES_1 := 5
 test() {
 	;Test function used for simple testing of sections of code.
 	upg := new Upgrades()
-	upg.clickToSecondPage()
+	upg.upgradePage(upg.yCoordAvailableSecondPage)
 }
 
 overviewMain() {
@@ -196,14 +196,15 @@ class Upgrades {
 		this.upgradeAvailableColor := "0x009600"
 		this.xCoordAvailable := 807
 		this.yCoordAvailableFirstPage := [481, 555, 633, 709, 785, 861]
-		this.yCoordAvailableSecondPage := [614, 687, 765, 840]
+		this.yCoordAvailableSecondPage := [614, 691, 765, 840]
 		this.yCoordAvailableThirdPage := [594, 670, 745, 821]
 		this.yCoordAvailableFourthPage := [487, 564, 639, 716, 791, 868]
 		this.xCoordToClick := 1129
-		this.variation := 10
+		this.variation := 3
 	}
 	
 	upgrade() {
+		this.clickToFirstPage()
 		this.upgradePage(this.yCoordAvailableFirstPage)
 		this.clickToSecondPage()
 		this.upgradePage(this.yCoordAvailableSecondPage)
@@ -215,33 +216,51 @@ class Upgrades {
 	
 	upgradePage(pageNumberList) {
 		for index, y in pageNumberList {
-			if (pixelSearch(this.xCoordAvailable, y, this.upgradeAvailableColor, this.variation) {
+			if (this.pixelSearch(this.xCoordAvailable, y, this.upgradeAvailableColor, this.variation)) {
 				MouseClick, Left, this.xCoordToClick, y
+				;ToolTip, Upgrades found, 0,0
 				Sleep, MOUSE_CLICK_DELAY
 			}
 		}
 	}
 	
+	pixelSearch(xCenter, yCenter, colorToFind, variation) {
+		PixelSearch, Px, Py, xCenter-10, yCenter-10, xCenter+10, yCenter+10, colorToFind, variation, Fast
+		if not ErrorLevel {
+			return true
+		} else {
+			return false
+		}
+	}
+	
+	clickToFirstPage() {
+		xCoord := 1238
+		yCoord := 463
+		MouseClick, Left, xCoord, yCoord
+		Sleep, MOUSE_CLICK_DELAY
+	}
+	
 	clickToSecondPage() {
-		xCoord := 1233
+		xCoord := 1238
 		yCoord := 635
 		MouseClick, Left, xCoord, yCoord
 		Sleep, MOUSE_CLICK_DELAY
 	}
 	
 	clickToThirdPage() {
-		xCoord := 1233
+		xCoord := 1238
 		yCoord := 732
 		MouseClick, Left, xCoord, yCoord
 		Sleep, MOUSE_CLICK_DELAY
 	}
 	
 	clickToFourthPage() {
-		xCoord := 1233
-		yCoord := 900
+		xCoord := 1238
+		yCoord := 904
 		MouseClick, Left, xCoord, yCoord
 		Sleep, MOUSE_CLICK_DELAY
 	}
+	
 }
 
 Class Research{
