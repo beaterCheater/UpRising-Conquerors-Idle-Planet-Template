@@ -5,46 +5,32 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 ;It is recommended to have upgraded the first planet at least 1 in each building to start a ship.
 
-p::
-	main()
-	return
-o::
-	ExitApp
-
-t::	
-	overviewMain()
-	return
-	
-g::
-	overview := new Overview()
-	overview.startGui()
-	return
-
 
 ;Global settings
-MOUSE_CLICK_DELAY := 100
+global MOUSE_CLICK_DELAY := 100
+global KEYBOARD_A_CLICK := 100
+global KEYBOARD_D_CLICK := 100
 
 ;Used for planet template
-POWER_PLANT_LVL := 45
-MATERIAL_EXTRACTOR_LVL := 40
-WAREHOUSE_LVL := 20
-FUEL_GEN_LVL := 35
-FUEL_TANK_LVL := 20
-HANGAR_LVL := 3
-SHIP_LVL := 21
+global POWER_PLANT_LVL := 45
+global MATERIAL_EXTRACTOR_LVL := 40
+global WAREHOUSE_LVL := 20
+global FUEL_GEN_LVL := 35
+global FUEL_TANK_LVL := 20
+global HANGAR_LVL := 3
+global SHIP_LVL := 21
 
 ;Max planets 29
-PLANETS_TO_UPGRADE := 29
+global PLANETS_TO_UPGRADE := 29
 
 ;When to buy research and upgrades
-RESEARCH_UPGRADE_INTERVAL := 3
-PLANET_COUNT_TO_BUY_UPGRADES_1 := 5
+global RESEARCH_UPGRADE_INTERVAL := 3
+global PLANET_COUNT_TO_BUY_UPGRADES_1 := 5
 
-	
 test() {
 	;Test function used for simple testing of sections of code.
-	research := new Research()
-	research.upgrade()
+	upg := new Upgrades()
+	upg.clickToSecondPage()
 }
 
 overviewMain() {
@@ -52,85 +38,18 @@ overviewMain() {
 	overview.upgradeLoop()
 }
 
-main() {
-	planetTemplate := new PlanetTemplate(POWER_PLANT_LVL,40,20,35,20,3,21)
-	allPlanetsComplete := false
-	listOfPlanets := Array()
-	planetCount := 20
-	currentPlanetCount := 1
-	research := new Research()
-	boughtUpgradesPartOne := false
-	planetCountToBuyUpgradesPartOne := 5
-	researchUpgradeInterval := 3
-	researchTimeCount := 1
-	
-	Loop %planetCount% {
-		listOfPlanets.Push(new Planet(planetTemplate))
-	}
-	
-	while (allPlanetsComplete = false) {
-		currentPlanetCursor := 1
-		allPlanetsComplete := true
-		
-		for index, planet in listOfPlanets {
-			if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
-				boughtUpgradesPartOne := true
-				navigateToResearch()
-				buyUpgradesPartOne()
-			}
-			
-		
-			planet.upgrade()
-			if (planet.isFullyUpgraded() = false) {
-				allPlanetsComplete := false
-			}
-			navigateToNextPlanet()
-			
-			
-			if (sendShip() = true) {
-				navigateToFirstPlanet(currentPlanetCursor)
-				currentPlanetCount := currentPlanetCount + 1
-				break
-			}
-			
-			; Check for end of planet limit or havent bought enough planets.
-			if (currentPlanetCursor = planetCount) or (currentPlanetCount = currentPlanetCursor){
-				navigateToFirstPlanet(currentPlanetCursor)
-				break
-			}
-			currentPlanetCursor := currentPlanetCursor + 1
-		}
-		
-		if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
-			boughtUpgradesPartOne := true
-			navigateToUpgrades()
-			buyUpgradesPartOne()
-			backToGalaxy()
-		}
-		if (researchTimeCount = researchUpgradeInterval) {
-			navigateToResearch()
-			research.upgrade()
-			backToGalaxy()
-			researchTimeCount := 0
-		}
-		researchTimeCount := researchTimeCount + 1
-	}
-}
-
-
 Class Overview {
 
 	__New() {
-		this.planetsToUpgrade := PLANETS_TO_UPGRADE
 		this.planetTemplate := new PlanetTemplate(POWER_PLANT_LVL, MATERIAL_EXTRACTOR_LVL, WAREHOUSE_LVL, FUEL_GEN_LVL, FUEL_TANK_LVL, HANGAR_LVL, SHIP_LVL)
 		this.research := new Research()
+		this.upgrades := new Upgrades()
 		this.listOfPlanets := Array()
 		this.setUpListOfPlanets()
 	}
 	
 	setUpListOfPlanets() {
-		loopIterations := this.planetsToUpgrade
-		Loop %loopIterations% {
+		Loop %PLANETS_TO_UPGRADE% {
 			this.listOfPlanets.Push(new Planet(this.planetTemplate))
 		}
 	}
@@ -143,13 +62,16 @@ Class Overview {
 		researchUpgradeInterval := 3
 		researchTimeCount := 1
 		
+		this.initFirstPlanet()
 		while (allPlanetsComplete = false) {
 			allPlanetsComplete = true
 			currentPlanetCursor := 1
-		
+			v := this.listOfPlanets.Length()
+			
 			for index, planet in this.listOfPlanets {
 				if (planet.isFullyUpgraded()) {
 					navigateToNextPlanet()
+					currentPlanetCursor := currentPlanetCursor + 1
 					continue
 				} else {
 					allPlanetsComplete := false
@@ -174,17 +96,23 @@ Class Overview {
 			if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
 				boughtUpgradesPartOne := true
 				navigateToUpgrades()
-				buyUpgradesPartOne()
+				;buyUpgradesPartOne()
+				upgrades.upgrade()
 				backToGalaxy()
 			}
 			if (researchTimeCount = researchUpgradeInterval) {
 				navigateToResearch()
-				research.upgrade()
+				this.research.upgrade()
 				backToGalaxy()
 				researchTimeCount := 0
 			}
 			researchTimeCount := researchTimeCount + 1
 		}	
+	}
+	
+	initFirstPlanet() {
+		;Setting up the first planet.
+		this.listOfPlanets[1].initPlanet()
 	}
 }
 
@@ -192,14 +120,14 @@ navigateToResearch() {
 	x := 620
 	y := 377
 	MouseClick, left, x, y
-	Sleep, 400
+	Sleep, MOUSE_CLICK_DELAY
 }
 
 navigateToUpgrades() {
 	x := 537
 	y := 369
 	MouseClick, left, x, y
-	Sleep, 300
+	Sleep, MOUSE_CLICK_DELAY
 }
 
 buyUpgradesPartOne() {
@@ -207,20 +135,20 @@ buyUpgradesPartOne() {
 	y := [486, 561, 637, 718, 790, 870]
 	for index, ycoord in y {
 		MouseClick, left, x, ycoord
-		Sleep,200
+		Sleep, MOUSE_CLICK_DELAY
 	}
 }
 
 navigateToFirstPlanet(jumpsBack) {
 	Loop %jumpsBack% {
 		Send {a}
-		Sleep, 300
+		Sleep, KEYBOARD_A_CLICK
 	}
 }
 
 navigateToNextPlanet() {
 	Send {d}
-	Sleep, 200
+	Sleep, KEYBOARD_D_CLICK
 }
 
 sendShip() {
@@ -232,7 +160,7 @@ sendShip() {
 	if (ErrorLevel = 0) {
 		MouseClick, left, x, y
 		sentShip := true
-		Sleep, 300
+		Sleep, MOUSE_CLICK_DELAY
 		;MsgBox, Found image.
 	} else if (ErrorLevel = 1) {
 		;MsgBox Image not found
@@ -243,6 +171,7 @@ sendShip() {
 }
 
 cannotSendShip() {
+	;Currently not used
 	variations := 220
 	ImageSearch, coordX, coordY, 1110, 484, 1280, 532, *%variations% fig/cannotSendShip.png
 	if (ErrorLevel = 0) {
@@ -258,7 +187,61 @@ backToGalaxy() {
 	x := 1074
 	y := 380
 	MouseClick, left, x, y
-	Sleep, 400
+	Sleep, MOUSE_CLICK_DELAY
+}
+
+class Upgrades {
+
+	__New() {
+		this.upgradeAvailableColor := "0x009600"
+		this.xCoordAvailable := 807
+		this.yCoordAvailableFirstPage := [481, 555, 633, 709, 785, 861]
+		this.yCoordAvailableSecondPage := [614, 687, 765, 840]
+		this.yCoordAvailableThirdPage := [594, 670, 745, 821]
+		this.yCoordAvailableFourthPage := [487, 564, 639, 716, 791, 868]
+		this.xCoordToClick := 1129
+		this.variation := 10
+	}
+	
+	upgrade() {
+		this.upgradePage(this.yCoordAvailableFirstPage)
+		this.clickToSecondPage()
+		this.upgradePage(this.yCoordAvailableSecondPage)
+		this.clickToThirdPage()
+		this.upgradePage(this.yCoordAvailableThirdPage)
+		this.clickToFourthPage()
+		this.upgradePage(this.yCoordAvailableFourthPage)
+	}
+	
+	upgradePage(pageNumberList) {
+		for index, y in pageNumberList {
+			if (pixelSearch(this.xCoordAvailable, y, this.upgradeAvailableColor, this.variation) {
+				MouseClick, Left, this.xCoordToClick, y
+				Sleep, MOUSE_CLICK_DELAY
+			}
+		}
+	}
+	
+	clickToSecondPage() {
+		xCoord := 1233
+		yCoord := 635
+		MouseClick, Left, xCoord, yCoord
+		Sleep, MOUSE_CLICK_DELAY
+	}
+	
+	clickToThirdPage() {
+		xCoord := 1233
+		yCoord := 732
+		MouseClick, Left, xCoord, yCoord
+		Sleep, MOUSE_CLICK_DELAY
+	}
+	
+	clickToFourthPage() {
+		xCoord := 1233
+		yCoord := 900
+		MouseClick, Left, xCoord, yCoord
+		Sleep, MOUSE_CLICK_DELAY
+	}
 }
 
 Class Research{
@@ -275,17 +258,11 @@ Class Research{
 	
 	upgrade() {
 		this.upgradeCosmic()
-		Sleep, 200
 		this.upgradeRadiant()
-		Sleep, 200
 		this.upgradeCombustion()
-		Sleep, 200
 		this.upgradeIonic()
-		Sleep, 200
 		this.upgradePicobots()
-		Sleep, 200
 		this.upgradeAtmospheric()
-		Sleep, 200
 	}
 	
 	upgradeCosmic() {
@@ -295,6 +272,7 @@ Class Research{
 		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
+			Sleep, MOUSE_CLICK_DELAY
 			this.cosmicLvl := this.cosmicLvl + 1
 			;MsgBox, Cosmic Found.
 		} else {
@@ -309,6 +287,7 @@ Class Research{
 		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
+			Sleep, MOUSE_CLICK_DELAY
 			this.radiantLvl := this.radiantLvl + 1
 			;MsgBox, Radiant found.
 		} else {
@@ -323,6 +302,7 @@ Class Research{
 		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
+			Sleep, MOUSE_CLICK_DELAY
 			this.combustionLvl := this.combustionLvl + 1
 			;MsgBox, Combustion Found
 		} else {
@@ -337,6 +317,7 @@ Class Research{
 		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
+			Sleep, MOUSE_CLICK_DELAY
 			this.ionicLvl := this.ionicLvl + 1
 			;MsgBox, Ionic found.
 		} else {
@@ -351,6 +332,7 @@ Class Research{
 		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
+			Sleep, MOUSE_CLICK_DELAY
 			this.picobotsLvl := this.picobotsLvl + 1
 			;MsgBox, Picobots found.
 		} else {
@@ -365,6 +347,7 @@ Class Research{
 		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
 		if not ErrorLevel {
 			MouseClick, left, x, y
+			Sleep, MOUSE_CLICK_DELAY
 			this.atmosphericLvl := this.atmosphericLvl + 1
 			;MsgBox, Atmospheric found.
 		} else {
@@ -400,22 +383,26 @@ Class Planet{
 	this.listOfShips := Array()
 	}
 	
+	initPlanet() {
+		;If this planet is the first one. This function must be run.
+		this.upgradePowerPlant()
+		this.upgradePowerPlant()
+		this.upgradeMaterialExtractor()
+		this.upgradeWareHouse()
+		this.upgradeFuelGen()
+		this.upgradeFuelTank()
+		this.upgradeHanger()
+	}
+	
 	upgrade() {
 		Sleep, 200
 		this.upgradePowerPlant()
-		Sleep, 400
 		this.upgradeHanger()
-		Sleep, 400
 		this.upgradeMaterialExtractor()
-		Sleep, 400
 		this.upgradeFuelGen()
-		Sleep, 400
 		this.upgradeWareHouse()
-		Sleep, 400
 		this.upgradeFuelTank()
-		Sleep, 400
 		this.upgradeShips()
-		Sleep, 400
 	}
 	
 	upgradePowerPlant() {
@@ -425,6 +412,7 @@ Class Planet{
 			variation := 5
 			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
+				Sleep, MOUSE_CLICK_DELAY
 				this.powerPlantLvl := this.powerPlantLvl + 1
 			}
 		}
@@ -437,6 +425,7 @@ Class Planet{
 			variation := 5
 			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
+				Sleep, MOUSE_CLICK_DELAY
 				this.materialExtractorLvl := this.materialExtractorLvl + 1
 			}
 		}
@@ -449,6 +438,7 @@ Class Planet{
 			variation := 5
 			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
+				Sleep, MOUSE_CLICK_DELAY
 				this.warehouseLvl := this.warehouseLvl + 1
 			}
 		}
@@ -461,6 +451,7 @@ Class Planet{
 			variation := 5
 			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
+				Sleep, MOUSE_CLICK_DELAY
 				this.fuelGenLvl := this.fuelGenLvl + 1
 			}
 		}
@@ -473,6 +464,7 @@ Class Planet{
 			variation := 5
 			if pixelSearch(x, y, this.upgradeAvailableColor, variation) {
 				MouseClick, left, x, y
+				Sleep, MOUSE_CLICK_DELAY
 				this.fuelTankLvl := this.fuelTankLvl + 1
 			}
 		}
@@ -484,14 +476,17 @@ Class Planet{
 			y := 786
 			x2 := 1195
 			y2 := 781
+			x3 := 1238
+			y3 := 761
 			variation := 13
-			if (pixelSearch(x, y, this.upgradeAvailableColor, variation)) and  (pixelSearch(x2, y2, this.upgradeAvailableColor, variation)){
+			if (pixelSearch(x, y, this.upgradeAvailableColor, variation)) and  (pixelSearch(x2, y2, this.upgradeAvailableColor, variation)) (pixelSearch(x3, y3, this.upgradeAvailableColor, variation)) {
 				MouseClick, left, x, y
+				Sleep, MOUSE_CLICK_DELAY
 				this.hangarLvl := this.hangarLvl + 1
 				this.listOfShips.Push(new Ship(this.planetTemplate.shipLvl, this.hangarLvl))
-				ToolTip, Hangar found, 0, 0
+				;ToolTip, Hangar found, 0, 0
 			} else {
-				ToolTip, Hangar not found, 0, 0
+				;ToolTip, Hangar not found, 0, 0
 			}
 		}
 	}
@@ -500,7 +495,6 @@ Class Planet{
 		;MsgBox, upgrade ships.
 		for index, ship in this.listOfShips {
 			ship.upgradeShip()
-			Sleep, 400
 		}
 	}
 	
@@ -509,7 +503,7 @@ Class Planet{
 	}
 	
 	areAllShipsUpgraded() {
-		for ship in listOfShips {
+		for index, ship in this.listOfShips {
 			if not ship.isShipFullyUpgraded() {
 				return false
 			}
@@ -539,6 +533,7 @@ Class Ship{
 			PixelSearch, Px, Py, x-2, y-2, x+2, y+2, this.upgradeShipAvailableColor, variation, Fast
 			if not ErrorLevel {
 				MouseClick, left, x, y
+				Sleep, MOUSE_CLICK_DELAY
 				this.shipLvl := this.shipLvl + 1
 				;MsgBox, Found.
 			} else {
@@ -567,3 +562,12 @@ pixelSearch(xCenter, yCenter, colorToFind, variation) {
 	}
 }
 
+p::
+	overviewMain()
+	return
+o::
+	ExitApp
+	
+t::	
+	test()
+	return
