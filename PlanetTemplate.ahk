@@ -68,13 +68,10 @@ Class Overview {
 			v := this.listOfPlanets.Length()
 			
 			for index, planet in this.listOfPlanets {
-				if (planet.isFullyUpgraded()) {
-					navigateToNextPlanet()
-					currentPlanetCursor := currentPlanetCursor + 1
-					continue
-				} else {
+				if (planet.isFullyUpgraded() = false) {
 					allPlanetsComplete := false
 				}
+				
 				planet.upgrade()
 				navigateToNextPlanet()
 				
