@@ -265,12 +265,6 @@ class Upgrades {
 Class Research{
 
 	__New() {
-		this.radiantLvl := 1
-		this.ionicLvl := 1
-		this.combustionLvl := 1
-		this.picobotsLvl := 1
-		this.atmosphericLvl := 1
-		this.cosmicLvl := 1
 		this.researchAvailableColor := "0xBDB97D"
 	}
 	
@@ -286,91 +280,44 @@ Class Research{
 	upgradeCosmic() {
 		x := 1121
 		y := 861
-		variation := 60
-		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			Sleep, MOUSE_CLICK_DELAY
-			this.cosmicLvl := this.cosmicLvl + 1
-			;MsgBox, Cosmic Found.
-		} else {
-			;MsgBox, Cosmic not found.
-		}
+		MouseClick, left, x, y
+		Sleep, MOUSE_CLICK_DELAY
 	}
 	
 	upgradeRadiant() {
 		x := 791
 		y := 557
-		variation := 50
-		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			Sleep, MOUSE_CLICK_DELAY
-			this.radiantLvl := this.radiantLvl + 1
-			;MsgBox, Radiant found.
-		} else {
-			;MsgBox, Radiant not found
-		}
+		MouseClick, left, x, y
+		Sleep, MOUSE_CLICK_DELAY
 	}
 	
 	upgradeCombustion() {
 		x := 794
 		y := 710
-		variation := 50
-		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			Sleep, MOUSE_CLICK_DELAY
-			this.combustionLvl := this.combustionLvl + 1
-			;MsgBox, Combustion Found
-		} else {
-			;MsgBox, Combustion not found.
-		}
+		MouseClick, left, x, y
+		Sleep, MOUSE_CLICK_DELAY
 	}
 	
 	upgradeIonic() {
 		x := 1121
 		y := 562
-		variation := 60
-		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			Sleep, MOUSE_CLICK_DELAY
-			this.ionicLvl := this.ionicLvl + 1
-			;MsgBox, Ionic found.
-		} else {
-			;MsgBox, Ionic found
-		}
+		MouseClick, left, x, y
+		Sleep, MOUSE_CLICK_DELAY
 	}
 	
 	upgradePicobots() {
 		x := 1121
 		y := 710
-		variation := 60
-		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			Sleep, MOUSE_CLICK_DELAY
-			this.picobotsLvl := this.picobotsLvl + 1
-			;MsgBox, Picobots found.
-		} else {
-			;MsgBox, Picobots not found.
-		}
+		MouseClick, left, x, y
+		Sleep, MOUSE_CLICK_DELAY
+
 	}
 	
 	upgradeAtmospheric() {
 		x := 794
 		y := 863
-		variation := 60
-		PixelSearch, Px, Py, x-5, y-5, x+5, y+5, this.researchAvailableColor, variation, Fast
-		if not ErrorLevel {
-			MouseClick, left, x, y
-			Sleep, MOUSE_CLICK_DELAY
-			this.atmosphericLvl := this.atmosphericLvl + 1
-			;MsgBox, Atmospheric found.
-		} else {
-			;MsgBox, Atmospheric not found.
-		}
+		MouseClick, left, x, y
+		Sleep, MOUSE_CLICK_DELAY
 	}
 }
 
