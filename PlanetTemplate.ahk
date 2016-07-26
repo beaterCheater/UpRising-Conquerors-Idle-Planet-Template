@@ -4,25 +4,25 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 ;Global settings
-global MOUSE_CLICK_DELAY := 100
-global KEYBOARD_A_CLICK := 100
-global KEYBOARD_D_CLICK := 100
+global MOUSE_CLICK_DELAY := 50
+global KEYBOARD_A_CLICK := 50
+global KEYBOARD_D_CLICK := 50
 
 ;Used for planet template
-global POWER_PLANT_LVL := 60
-global MATERIAL_EXTRACTOR_LVL := 55
-global WAREHOUSE_LVL := 30
-global FUEL_GEN_LVL := 50
-global FUEL_TANK_LVL := 30
+global POWER_PLANT_LVL := 65
+global MATERIAL_EXTRACTOR_LVL := 60
+global WAREHOUSE_LVL := 40
+global FUEL_GEN_LVL := 55
+global FUEL_TANK_LVL := 40
 global HANGAR_LVL := 3
 global SHIP_LVL := 31
 
 ;Max planets 29
-global PLANETS_TO_UPGRADE := 28
+global PLANETS_TO_UPGRADE := 27
 
 ;When to buy research and upgrades
 global RESEARCH_UPGRADE_INTERVAL := 3
-global PLANET_COUNT_TO_BUY_UPGRADES_1 := 5
+global UPGRADES_UPGRADE_INTERVAL := 100
 
 test() {
 	;Test function used for simple testing of sections of code.
@@ -56,10 +56,9 @@ Class Overview {
 	upgradeLoop() {
 		allPlanetsComplete := false
 		currentPlanetCount := 1
-		boughtUpgradesPartOne := false
-		planetCountToBuyUpgradesPartOne := 5
-		researchUpgradeInterval := 3
 		researchTimeCount := 1
+		;Setting this value high to begin with to make sure upgrades in the beginning are bought, and do not have to wait a long time for them.
+		upgradesTimeCount := 50
 		
 		this.initFirstPlanet()
 		while (allPlanetsComplete = false) {
@@ -82,27 +81,26 @@ Class Overview {
 				}
 				
 				; Check for end of planet limit or havent bought enough planets.
-				if (currentPlanetCursor = planetCount) or (currentPlanetCount = currentPlanetCursor){
+				if (currentPlanetCursor = PLANETS_TO_UPGRADE) or (currentPlanetCount = currentPlanetCursor){
 					navigateToFirstPlanet(currentPlanetCursor)
 					break
 				}
 				currentPlanetCursor := currentPlanetCursor + 1
 			}
 			
-			if (boughtUpgradesPartOne = false) and (currentPlanetCount = planetCountToBuyUpgradesPartOne) {
-				boughtUpgradesPartOne := true
-				navigateToUpgrades()
-				;buyUpgradesPartOne()
+			if (upgradesTimeCount = UPGRADES_UPGRADE_INTERVAL) {
+				navigateToUpgrades()()
 				this.upgrades.upgrade()
 				backToGalaxy()
 			}
-			if (researchTimeCount = researchUpgradeInterval) {
+			if (researchTimeCount = RESEARCH_UPGRADE_INTERVAL) {
 				navigateToResearch()
 				this.research.upgrade()
 				backToGalaxy()
 				researchTimeCount := 0
 			}
 			researchTimeCount := researchTimeCount + 1
+			upgradesTimeCount := upgradesTimeCount + 1
 		}	
 	}
 	
@@ -124,15 +122,6 @@ navigateToUpgrades() {
 	y := 369
 	MouseClick, left, x, y
 	Sleep, MOUSE_CLICK_DELAY
-}
-
-buyUpgradesPartOne() {
-	x := 1125
-	y := [486, 561, 637, 718, 790, 870]
-	for index, ycoord in y {
-		MouseClick, left, x, ycoord
-		Sleep, MOUSE_CLICK_DELAY
-	}
 }
 
 navigateToFirstPlanet(jumpsBack) {
