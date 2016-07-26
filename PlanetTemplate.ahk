@@ -3,9 +3,6 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
-;It is recommended to have upgraded the first planet at least 1 in each building to start a ship.
-
-
 ;Global settings
 global MOUSE_CLICK_DELAY := 100
 global KEYBOARD_A_CLICK := 100
