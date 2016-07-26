@@ -12,16 +12,16 @@ global KEYBOARD_A_CLICK := 100
 global KEYBOARD_D_CLICK := 100
 
 ;Used for planet template
-global POWER_PLANT_LVL := 45
-global MATERIAL_EXTRACTOR_LVL := 40
-global WAREHOUSE_LVL := 20
-global FUEL_GEN_LVL := 35
-global FUEL_TANK_LVL := 20
+global POWER_PLANT_LVL := 60
+global MATERIAL_EXTRACTOR_LVL := 55
+global WAREHOUSE_LVL := 30
+global FUEL_GEN_LVL := 50
+global FUEL_TANK_LVL := 30
 global HANGAR_LVL := 3
-global SHIP_LVL := 21
+global SHIP_LVL := 31
 
 ;Max planets 29
-global PLANETS_TO_UPGRADE := 29
+global PLANETS_TO_UPGRADE := 28
 
 ;When to buy research and upgrades
 global RESEARCH_UPGRADE_INTERVAL := 3
@@ -29,8 +29,10 @@ global PLANET_COUNT_TO_BUY_UPGRADES_1 := 5
 
 test() {
 	;Test function used for simple testing of sections of code.
+	navigateToUpgrades()
 	upg := new Upgrades()
-	upg.upgradePage(upg.yCoordAvailableSecondPage)
+	upg.upgrade()
+	backToGalaxy()
 }
 
 overviewMain() {
@@ -97,7 +99,7 @@ Class Overview {
 				boughtUpgradesPartOne := true
 				navigateToUpgrades()
 				;buyUpgradesPartOne()
-				upgrades.upgrade()
+				this.upgrades.upgrade()
 				backToGalaxy()
 			}
 			if (researchTimeCount = researchUpgradeInterval) {
