@@ -92,6 +92,7 @@ Class Overview {
 				navigateToUpgrades()()
 				this.upgrades.upgrade()
 				backToGalaxy()
+				upgradesTimeCount := 0
 			}
 			if (researchTimeCount = RESEARCH_UPGRADE_INTERVAL) {
 				navigateToResearch()
@@ -500,6 +501,8 @@ Class Ship{
 			return 843
 		} else if (this.shipNumber = 3) {
 			return 876
+		} else if (this.shipNumber = 4) {
+			return 907
 		}
 	}
 }
